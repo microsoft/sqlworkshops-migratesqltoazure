@@ -21,6 +21,8 @@
 
 2. Use HammerDB to deploy a 10 scale db for TPC-H
 
+Use your sqladmin new SQL login to run this.
+
 This can take way too long using the HammerDB tool. We may need to go smaller here on the db size or come up with scripts and text files to load this faster.
 
 Ideally we would script this and create bcp files or a BACPAC.

@@ -98,15 +98,20 @@ Put info in here about look at some of the basics of the VM
  
 Check SSMS is installed
 
-
 Check disk drives are setup as deployed from the portal
 Check SQL 2016 SP2 is installed SP2 CU17 is actually installed which is the latest CU that includes all security updates. By the time you use this workshop it could be SP3 (which was just released in sept 2021)
 
 Check trace flags
 
-610 and 1117 actually set (1117)
+610 and 1117 actually set (1117 is discontinued so this is a left over from previous releases).
 
-2. Create a new folder on the OS drive called c:\scripts
+1. Apply latest windows updates. They may require a VM restart
+
+2. Create a new folder on the OS drive called c:\scripts to place any scripts for migration.
+
+3. Disable IE Enhanced Security Configuration in Server Manager
+
+Enable lock pages in memory for the NT SERVICE\MSSQLSERVER account which is not enabled by default. Restart SQL Server.
 
 ## Backup the SQL Server 2016 database
 
@@ -130,6 +135,8 @@ Choose Storage account
 3. Use the SSMS wizard to backup a full db to Azure storage
 
 Right-click the tpch database and select Backup as a task. Use the ssms_backup_to_url_menu.png image. 
+
+TODO: Choose CHECKSUM and compression
 
 Select Destination as URL and select Add. Then select New to choose a new container as the destination. Use the ssms_back_to_url_new_container.png image.
 
@@ -155,15 +162,11 @@ You should already have the script to recreate the SQL login from the pre-reqs
 
 TODO:
 
-3. Save these files on your local drive as you will copy these into the new VM
+3. Save these files on your local drive and "copy and paste" them into the c:\scripts folder of the new VM.
 
 ## Migrate SQL logins
 
-1. Use SSMS to allow mixed mode auth and reboot
-
-1. In your local VM, select the SQL login script and "Copy"
-
-2. Switch to the new VM and copy the file into the c:\scripts folder
+1. Use SSMS to allow mixed mode auth and restart SQL Server
 
 3. connect to SSMS with Windows auth
 
@@ -171,13 +174,60 @@ TODO:
 
 ## Restore DB
 
-1. Using our optimize while migrating strategy let's enable IFI
+1. Using our optimize while migrating strategy let's enable IFI with local policies and restart SQL Server.
 
 5. disconnect from SSMS and log in with the sqladmin account
 
 6. Use SSMS to restore the db from Azure Storage
 
+a. Select Restore Database from SSMS Object Explorer
+
+Use ssms_restore_database_menu.png image
+
+b. Choose the database backup file from Azure Storage via URL
+
+Use ssms_restore_database_choose_url_device.ping image
+
+c. Click Add to be able to select the Azure Storage container location and file
+
+Use ssms_restore_database_add_storage_container.png as the image
+
+d. Connect to your Azure subscription and select the storage account and container.
+
+Sign-in to your Azure subscription. Your organization may have certain requirements to sign-in like MFA.
+
+Choose the storage account you used to backup the database from your source VM and the container. Choose Create for a SAS key to be used to access the backup file. Then click OK.
+
+You can then click OK on the dialog box titles Select a Backup location at the storage container and key are now filled in
+
+e. Choose the backup file
+
+You will now be put into an "explorer" experience to choose your backup file. Select Containers and your container name. Your backup file should be listed in the right-hand pane.
+
+Select it and click OK.
+
+Use ssms_restore_database_choose_backup_file.png as the image
+
+f. Your backup file will be filled in for the Backup media on the screen Select backup device. Click OK.
+
+g. Your backup details are now filled in on the Restore Database screen. Click OK to restore the backup.
+
+You should see a progress bar and % at the top of the screen.
+
+Use ssms_restore_database_progress.png as the image
+
+When done you will see a dialog box that says Database 'tpch' restored successfully. Click OK.
+
 7. Verify the database has been restored
+
+There are many ways to do this. Two quick things to check
+
+1. the size of the files.
+
+F:\data\tpch.mdf should be around 17,272,832 kb
+G:\log\tpch_log.ldf should be around 1,024,000 kb
+
+2. SSMS Object Explorer should have customer, lineitem, nation, orders, part, partsupp, region, and supplier tables.
 
 ## Add SQL Agent job for update stats
 
