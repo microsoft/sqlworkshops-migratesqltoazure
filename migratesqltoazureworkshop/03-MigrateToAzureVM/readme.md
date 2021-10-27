@@ -26,16 +26,16 @@ Once you have chosen the SQL and Windows combination, select Create
 
 Main screen - Use azure_port_create_vm_main.png as the image
 
-Use existing RG from Azure storage account
+Use a new RG called tpchrg
 Pick a VM name. It can be the same name as your current server or another one. This becomes the computer name of the Windows Server and @@SERVERNAME.
-Choose same region as Azure storage account
+Choose a region closest to your on-premises deployment.
 No infrastructure because we are not going to setup HA for this VM (like clustering or AGs)
 Image preselected since we chose this in the previous screen. BUG FIX: Change this to choose Engine only option.
 Don't pick Spot Instance
-For size, we should choose the size recommended during Assessment which is XXXX. Note the cost is ~1,097.92/month
+For size, we should choose the size recommended during Assessment which is E16as_v4 - 16 Available vCPU. Note the cost is ~1200/month.
 Fill out an admin. This will be a local Windows admin account for the VM and will be auto added as a sysadmin to SQL Server.
 Leave the RDP port public (we will secure the VM in the next module)
-Note the option for Licensing for AHB. Since you already have a license for Windows Server for your VM and are migrating you can select this. Notice in the portal option for Size the price changed to $560.64/month)
+Note the option for Licensing for AHB. Since you already have a license for Windows Server for your VM and are migrating you can select this. Notice in the portal option for Size the price changed to ~$700/month)
 
 Select Next:Disks at the bottom of the screen
 
@@ -152,26 +152,6 @@ You are now back to the main Backup Up Database screen where the URL filename is
 
 Using the portal you can look at your sqlbackups container and verify the backup file exists. Use the tpch_backup_in_azure_storage.png image.
 
-## Generate scripts for SQL instance objects
-
-1. Generate script for SQL login
-
-You should already have the script to recreate the SQL login from the pre-reqs
-
-2. Generate script for SQL Agent jobs
-
-TODO:
-
-3. Save these files on your local drive and "copy and paste" them into the c:\scripts folder of the new VM.
-
-## Migrate SQL logins
-
-1. Use SSMS to allow mixed mode auth and restart SQL Server
-
-3. connect to SSMS with Windows auth
-
-4. Execute the sql login script
-
 ## Restore DB
 
 1. Using our optimize while migrating strategy let's enable IFI with local policies and restart SQL Server.
@@ -229,7 +209,30 @@ G:\log\tpch_log.ldf should be around 1,024,000 kb
 
 2. SSMS Object Explorer should have customer, lineitem, nation, orders, part, partsupp, region, and supplier tables.
 
-## Add SQL Agent job for update stats
+## Migrate other objects
 
-We will use SQL IaaS ext for auto backups
+### Generate scripts
 
+1. Generate script for SQL login
+
+You should already have the script to recreate the SQL login from the pre-reqs
+
+2. Generate script for SQL Agent jobs
+
+TODO:
+
+3. Save these files on your local drive and "copy and paste" them into the c:\scripts folder of the new VM.
+
+### Migrate SQL logins
+
+1. Use SSMS to allow mixed mode auth and restart SQL Server
+
+3. connect to SSMS with Windows auth
+
+4. Execute the sql login script
+
+### Add SQL Agent job for update stats
+
+We will use SQL IaaS ext for auto backups in the next module
+
+TODO:
