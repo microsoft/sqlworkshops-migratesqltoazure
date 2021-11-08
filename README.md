@@ -1,3 +1,21 @@
+# Migrate SQL Server to Azure Workshop (Under Construction)
+
+Welcome to the Migrate SQL Server to Azure Workshop. This is a free workshop that includes content and exercises to learn how to migrate SQL Server to SQL Server in Azure Virtual Machine and Azure SQL Managed Instance.
+
+This workshop is currently under construction. No ETA is available when it will be available for preview. The slides folder contains a preview slide deck you are free to use for getting a visual look at what will be in the workshop.
+
+The folders listed for the modules of the workshop include some instructional files along with some scripts but it is all still under constructions.
+
+This workshop is currently being designed to have the following modules:
+
+1. Migrate SQL Server to Azure Fundamentals
+2. Assess SQL Server
+1. Migrate to Azure Virtual Machine
+1. Optimize and manage SQL Server in Azure Virtual Machine
+1. Migrate to Azure SQL Managed Instance
+1. Optimize and manage Azure SQL Managed Instance
+1. Migrate from Azure Virtual Machine to Managed Instance
+
 # Project
 
 > This repo has been populated by an initial template to help get you started. Please

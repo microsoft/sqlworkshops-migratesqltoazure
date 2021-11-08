@@ -219,8 +219,6 @@ You should already have the script to recreate the SQL login from the pre-reqs
 
 2. Generate script for SQL Agent jobs
 
-TODO:
-
 3. Save these files on your local drive and "copy and paste" them into the c:\scripts folder of the new VM.
 
 ### Migrate SQL logins

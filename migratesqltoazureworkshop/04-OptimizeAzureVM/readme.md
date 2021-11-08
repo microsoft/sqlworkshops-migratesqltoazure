@@ -9,16 +9,16 @@ Explore the portal and az CLI
 Enable auto manage backups per the previous backup db and log schedule
     First enable backup checksum from sp_configure and explain why
 Enable auto updates
-
-## Secure, apply updates, and Azure Hybrid Benefit (AHB)
-
-Enable JIT for RDP
-Disable SQL port because client will join Azure network
-Apply all Windows updates and any SQL updates
+Use AHB
+Pricing calculator to see the price diff also with reserved instances concept
 
 ## Implement best practices
 
 ### Secure SQL Server in Azure Virtual Machine
+
+Enable JIT for RDP or SSH
+Disable SQL port because client will join Azure network
+Apply all OS updates and any SQL updates
 
 ### Optimizing storage
 
@@ -51,15 +51,6 @@ https://docs.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/perfor
 
 ### Setup SQL Assessment
 
-TODO: coming in public preview. Checking with Ebru.
-
 ### Use SQL Insights
 
 ## Verify workload and application
-
-    Install HammerDB
-
-    This is run locally
-    
-    Use the same driver script settings for 8 virtual users. Run workload and observe when done similar performance as with the SQL 2016 VM.
-    Put in here any app impact issues to consider

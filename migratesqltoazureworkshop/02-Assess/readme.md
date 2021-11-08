@@ -12,6 +12,12 @@ Future revs of the workshop should be able to used Azure Migrate for the remaini
 
 2. Since this is a lift and shift to Azure VM there is no reason to run DMA to assess for any compat issues. But we can use DMA to assess a workload and configuration to get recommendations on the right VM size and storage.
 
+3. Note the current CPU, memory, and storage for the VM for SQL Server.
+
+4. Note the SQL Server version and database installed including its size
+
+5. The workload is TPC-H
+
 3. Run HammerDB with 16 virtual users. Leave all other defaults. Turn on Transactions and you will see the test takes about mins with an avg of 10000 QpH.
 
 You can read more about using this assessment tool at https://docs.microsoft.com/en-us/sql/dma/dma-sku-recommend-sql-db?view=sql-server-ver15
@@ -30,7 +36,7 @@ SqlAssessment.exe GetSkuRecommendation --targetPlatform AzureSqlVirtualMachine -
 
 6. Review the results to look at the virtual machine sizes. Put in details here about how to look at these.
 
-## Assessing a more complex migration for SQL Server 2019
+## Assessing a more advanced migration for SQL Server 2019
 
 1. Use HammerDB with TPCC
 
@@ -75,4 +81,3 @@ SKU recommendation report saved to c:\demos\SkuRecommendationReport.html.
 You can also look at a HTML version of the output
 
 Show the HTML report here
-

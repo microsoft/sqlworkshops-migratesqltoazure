@@ -20,3 +20,4 @@ need to modify video to use proper GP cores
 ## Optimize
 
 Do some of the same things you did for the TPCC scenario as optimize steps
+Show the database is dbcompat 130 as part of our agreement with the ISV
