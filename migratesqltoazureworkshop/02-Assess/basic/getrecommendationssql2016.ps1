@@ -1,0 +1,1 @@
+SqlAssessment.exe GetSkuRecommendation --targetPlatform AzureSqlVirtualMachine --outputFolder c:\migrate
