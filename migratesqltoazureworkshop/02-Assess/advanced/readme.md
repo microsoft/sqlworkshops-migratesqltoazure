@@ -1,49 +1,42 @@
 # Discover and Assess SQL Server
 
-
-
 ## Assessing a more complex migration for SQL Server 2019
 
-1. Use HammerDB with TPCC
+1. Run DMA to assess your SQL Server to migrate for Azure SQL Managed Instance
 
-32 virtual users. Timed test for 5 minutes no ramp up. The average TPS was between 300-400K
+Create an assessment project for a target of Azure SQL Managed Instance
 
-2. Run DMA to assess your SQL Server to migrate for Azure SQL MI
+The assessment doesn't find any issues with database compatibility. It does find an issue for feature parity because I'm using trace flags 1117 and 1118. Azure SQL Managed Instance doesn't support these two trace flags. Fortunately these trace flags are holdovers from older versions of SQL Server are not needed any further. They were probably turned on for tempdb but the functionality for these trace flags are enabled by default for tempdb in Azure SQL Managed Instance (and have been since SQL Server 2016).
 
-Here are the rules
+You can read more details on the rules DMA uses for assessments for migrations to Azure SQL Managed Instance at: https://docs.microsoft.com/en-us/azure/azure-sql/migration-guides/managed-instance/sql-server-to-sql-managed-instance-assessment-rules
 
-https://docs.microsoft.com/en-us/azure/azure-sql/migration-guides/managed-instance/sql-server-to-sql-managed-instance-assessment-rules
+2. To perform a SKU assessment run the workload using HammerDB with TPCC
 
-2. Run the SKU assessment tool during a 5 minute test run
+32 virtual users. Timed test for 2 minutes no ramp up. The average TPS was between 300-400K
 
-TODO: The tool right now says GP service tier is fine for MI but my log I/O latency needs are more than that. Per the docs https://docs.microsoft.com/en-us/azure/azure-sql/managed-instance/resource-limits. GP is about 5-10ms where BC is 1-2ms
+3. Run the SKU assessment tool using the script **assesssql2019.ps1** which runs the following command:
 
-TODO: I used a scaling factor of 150 because I believe I may need to scale for the future so it recommended a 8vCore CPU.
+`SqlAssessment.exe PerfDataCollection --sqlConnectionStrings "Data Source=.;Initial Catalog=master;Integrated Security=True;" --outputFolder c:\migrate --perfQueryIntervalInSec 5 --numberOfIterations 24`
 
-The results look like this
+Normally you would let the tool run longer to asses your workload but for purposes of this exercise I will only run the workload for a few minutes. The perfQueryIntervalInSec indicates how often performance information will be collected. The numberOfIterations determine how many iterations before performance data is persisted. So after 120 seconds, performance data is persisted to be used for the assessment.
 
-`
-PS C:\demos> .\getskurecommendation.ps1
-Starting SKU recommendation...
+4. When all users for HammerDB are done (about 2mins), hit enter in the powershell window to finish the collection.
 
-Performing aggregation for instance tpccsql2019...
-Aggregation complete. Calculating SKU recommendations...
-Instance name: tpccsql2019
-SKU recommendation: Azure SQL Managed Instance:
-Compute: GeneralPurpose - 16 cores
-Storage: 32 GB
-Recommendation reasons:
-        According to the performance data collected, we estimate that your SQL server instance has a requirement for 3.84 vCores of CPU. For greater flexibility, based on your scaling factor of 250.00%, we are making a recommendation based on 9.60 vCores. Based on all the other factors, including memory, storage, and IO, this is the smallest compute sizing that will satisfy all of your needs.
-        This SQL Server instance requires 9.36 GB of memory, which is within this SKU's limit of 81.60 GB.
-        This SQL Server instance requires 10.88 GB of storage for data files. We recommend provisioning 32 GB of storage, which is the closest valid amount that can be provisioned that meets your requirement.
-        This SQL Server instance requires 103.49 milliseconds of IO latency, which is within the limits of the General Purpose service tier.
-        Assuming the database uses the Full Recovery Model, this SQL Server instance requires 26,217 IOPS for data and log files. Based on the current file size you can get 500 IOPS if you migrate as-is, otherwise please increase the file size to get more IOPS.
-        This is the most cost-efficient offering among all the performance eligible SKUs.
+5. Now Run SQL Assessment to get sku recommendations from the script **getrecommendationssql2019.ps1** which runs the following command:
 
+`SqlAssessment.exe GetSkuRecommendation --targetPlatform AzureSqlManagedInstance --outputFolder c:\migrate --scalingFactor 200`
 
-Finishing SKU recommendations...
-SKU recommendation report saved to c:\demos\SkuRecommendationReport.html.
+We know we want the assessment to target SQL Server in Azure SQL Managed Instance which matches the targetPlatform parameter. We also use the scalingFactor parameter which tells the tool to "scale up" the recommendation because we know the workload test isn't completely representative of the required vCores. In this advanced scenario we know the HammerDB workload for 2 minutes doesn't fully represent the needed resources of the application.
 
-You can also look at a HTML version of the output
+6. The results will be displayed in the console but also available in an HTML file in the same directory where you ran the migration (in this case c:\migrate). The name of the HTML file is SkuRecommendationReport.html
 
-Show the HTML report here
+The results for this execution should look similar to the following
+
+:::image type="content" source="../../../graphics/advanced_migration_sku_recommendation_report.png" alt-text="advanced_migration_sku_recommendation_report":::
+
+The report recommends a Service Tier of General Purpose but that may not line up with requirements of the Advanced migration scenario. This is due to the following reasons:
+
+- The tool currently doesn't look at HA requirements such as the existence of an Always On Availability Group
+- The tool currently doesn't offer a way to look at low latency transaction log requirements which is part of this workload.
+
+Because of these requirements our plan will be to use the Business Critical Service Tier. The compute size seems accurate based on our workload and scaling factor. The Storage Size is not accurate because it only accounts for the size of the current workload sample database. Our requirements call for larger sizes so we will use those when deploying the Azure SQL Managed Instance.
