@@ -1,0 +1,1 @@
+SqlAssessment.exe PerfDataCollection --sqlConnectionStrings "Data Source=.;Initial Catalog=master;Integrated Security=True;" --outputFolder c:\migrate --perfQueryIntervalInSec 5 --numberOfIterations 24

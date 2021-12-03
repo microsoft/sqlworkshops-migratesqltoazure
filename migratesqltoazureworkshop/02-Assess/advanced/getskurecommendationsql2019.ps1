@@ -1,0 +1,1 @@
+SqlAssessment.exe GetSkuRecommendation --targetPlatform AzureSqlManagedInstance --outputFolder c:\migrate --scalingFactor 200

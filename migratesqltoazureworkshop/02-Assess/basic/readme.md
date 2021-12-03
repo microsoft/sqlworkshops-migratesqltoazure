@@ -1,14 +1,17 @@
 # Discover and Assess SQL Server
 
-## Using Azure Migrate to discover SQL Server
-
-For the first rev of the workshop this will be a description only of how Azure Migrate works to discover and assess SQL Server on VMWare. Point to any public video that can be watched to see the experience.
-
-Future revs of the workshop should be able to used Azure Migrate for the remaining exercises in this module instead of DMA.
+All prereqs must be complete
 
 ## Assessing a basic migration for SQL Server 2016
 
-1. All prereqs must be complete
+1. Assess aspects of the current SQL Server 2016 installation:
+
+- Show number of cores through Task Manager
+- Show in SSMS the size of the database and transaction log for the tpch database and that they are on the same drive.
+- Show tempdb on the same drive as data and log
+- Show @@VERSION including edition
+- Show the SQL login sqladmin
+- Show SQL Agent jobs to backup db, log, and update stats in the form of maintenance plans
 
 2. Since this is a lift and shift to Azure VM there is no reason to run DMA to assess for any compat issues. But we can use DMA to assess a workload and configuration to get recommendations on the right VM size and storage.
 
@@ -16,63 +19,30 @@ Future revs of the workshop should be able to used Azure Migrate for the remaini
 
 You can read more about using this assessment tool at https://docs.microsoft.com/en-us/sql/dma/dma-sku-recommend-sql-db?view=sql-server-ver15
 
-4. In a new powershell command window run assesssql2016.ps1 which runs these commands:
+4. In a new powershell command window run **assesssql2016.ps1** which runs these commands:
 
-SqlAssessment.exe PerfDataCollection --sqlConnectionStrings "Data Source=.;Initial Catalog=master;Integrated Security=True;" --outputFolder c:\demos --numberOfIterations 10
+`SqlAssessment.exe PerfDataCollection --sqlConnectionStrings "Data Source=.;Initial Catalog=master;Integrated Security=True;" --outputFolder c:\migrate --perfQueryIntervalInSec 5 --numberOfIterations 24`
 
-We use iterations of 10 because the tool will then persist performance data after 5 minutes.
+Normally you would let the tool run longer to asses your workload but for purposes of this exercise I will only run the workload for a few minutes. The perfQueryIntervalInSec indicates how often performance information will be collected. The numberOfIterations determine how many iterations before performance data is persisted. So after 120 seconds, performance data is persisted to be used for the assessment.
 
-5. When all users for HammerDB are done (about 5mins), hit enter in the powershell window to finish the collection.
+5. Check Task Manager and Performance Dashboard for core usage
 
-5. Now Run SQL Assessment to get sku recommendations like the following:
+6. When all users for HammerDB are done (about 2mins), hit enter in the powershell window to finish the collection.
 
-SqlAssessment.exe GetSkuRecommendation --targetPlatform AzureSqlVirtualMachine --outputFolder c:\demos
+5. Now Run SQL Assessment to get sku recommendations from the script **getrecommendationssql2016.ps1** which runs the following command:
 
-6. Review the results to look at the virtual machine sizes. Put in details here about how to look at these.
+`SqlAssessment.exe GetSkuRecommendation --targetPlatform AzureSqlVirtualMachine --outputFolder c:\migrate`
 
-## Assessing a more complex migration for SQL Server 2019
+We know we want the assessment to target SQL Server in Azure Virtual Machine which matches the targetPlatform parameter.
 
-1. Use HammerDB with TPCC
+7. The results will be displayed in the console but also available in an HTML file in the same directory where you ran the migration (in this case c:\migrate). The name of the HTML file is SkuRecommendationReport.html
 
-32 virtual users. Timed test for 5 minutes no ramp up. The average TPS was between 300-400K
+The results for this execution should look similar to the following
 
-2. Run DMA to assess your SQL Server to migrate for Azure SQL MI
+:::image type="content" source="../../../graphics/basic_migration_sku_recommendation_report.png" alt-text="basic_migration_sku_recommendation_report":::
 
-Here are the rules
+The report shows Compute Sizing as the VM size choice based on a minimum recommended 1:8 core/memory ratio. Storage sizing shows how to configure Azure Premium Storage for data, log, and tempdb. The Justification and Requirements View buttons give more details on the recommendations.
 
-https://docs.microsoft.com/en-us/azure/azure-sql/migration-guides/managed-instance/sql-server-to-sql-managed-instance-assessment-rules
+The Requirements detail give information about how large Azure storage is needed for data and log but it doesn't accurately reflect our requirements which are larger than the workload sample db size.
 
-2. Run the SKU assessment tool during a 5 minute test run
-
-TODO: The tool right now says GP service tier is fine for MI but my log I/O latency needs are more than that. Per the docs https://docs.microsoft.com/en-us/azure/azure-sql/managed-instance/resource-limits. GP is about 5-10ms where BC is 1-2ms
-
-TODO: I used a scaling factor of 150 because I believe I may need to scale for the future so it recommended a 8vCore CPU.
-
-The results look like this
-
-`
-PS C:\demos> .\getskurecommendation.ps1
-Starting SKU recommendation...
-
-Performing aggregation for instance tpccsql2019...
-Aggregation complete. Calculating SKU recommendations...
-Instance name: tpccsql2019
-SKU recommendation: Azure SQL Managed Instance:
-Compute: GeneralPurpose - 16 cores
-Storage: 32 GB
-Recommendation reasons:
-        According to the performance data collected, we estimate that your SQL server instance has a requirement for 3.84 vCores of CPU. For greater flexibility, based on your scaling factor of 250.00%, we are making a recommendation based on 9.60 vCores. Based on all the other factors, including memory, storage, and IO, this is the smallest compute sizing that will satisfy all of your needs.
-        This SQL Server instance requires 9.36 GB of memory, which is within this SKU's limit of 81.60 GB.
-        This SQL Server instance requires 10.88 GB of storage for data files. We recommend provisioning 32 GB of storage, which is the closest valid amount that can be provisioned that meets your requirement.
-        This SQL Server instance requires 103.49 milliseconds of IO latency, which is within the limits of the General Purpose service tier.
-        Assuming the database uses the Full Recovery Model, this SQL Server instance requires 26,217 IOPS for data and log files. Based on the current file size you can get 500 IOPS if you migrate as-is, otherwise please increase the file size to get more IOPS.
-        This is the most cost-efficient offering among all the performance eligible SKUs.
-
-
-Finishing SKU recommendations...
-SKU recommendation report saved to c:\demos\SkuRecommendationReport.html.
-
-You can also look at a HTML version of the output
-
-Show the HTML report here
-
+In this case the SKU tool recommended a Standard_E16as_v4 which falls in line with our recommendations of using the E series. One of the sizes we typically recommend because of its better I/O performance and local storage is the Standard_E16ds_v4 VM sizes. We have recently released E5 series of VMs so our tools will be updated to reflect recommending these new sizes.
