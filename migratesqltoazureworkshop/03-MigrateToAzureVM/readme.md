@@ -12,6 +12,19 @@ Once the migration is complete, in the next module we will optimize and manage t
 
 ## Deploy the target Azure VM
 
+Note: The instructor may have the VM already deployed since it can take 10 minutes or longer to deploy the VM
+
+1. Use the marketplace to deploy the SQL Server in Azure Virtual Machine with SQL Server 2016 Standard Edition with Windows Server 2016.
+
+
+
+
+
+
+
+
+
+
 TODO: mention you can automate this process with Azure templates.
 
 1. Use Azure SQL in the portal to choose SQL Server 2016 SP2 Std on Windows 2016 Datacenter.
