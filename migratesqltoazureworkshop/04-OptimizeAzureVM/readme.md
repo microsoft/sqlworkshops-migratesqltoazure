@@ -1,56 +1,19 @@
-# Optimize and manage migration with Azure VM
+# Optimize and manage SQL Server in Azure Virtual Machine
 
-## Overview
+This module includes exercises to explore Azure, use the SQL Agent IaaS Agent extension, explore how to execute backups for SQL Server databases, verify workload execution after migration, and use the power of Azure with services like Microsoft Defender for SQL.
 
-## Explore Azure and use SQL IaaS Agent extension
+## Explore Azure Virtual Machine and the SQL IaaS Agent extension
 
-If not already in use, enable SQL IaaS Agent extension
-Explore the portal and az CLI
-Enable auto manage backups per the previous backup db and log schedule
-    First enable backup checksum from sp_configure and explain why
-Enable auto updates
-Use AHB
-Pricing calculator to see the price diff also with reserved instances concept
+Follow the readme.md file in the **explore** folder
 
-## Implement best practices
+## Backups for SQL Server in Azure Virtual Machine
 
-### Secure SQL Server in Azure Virtual Machine
+Follow the readme.md file in the **backups** folder
 
-Enable JIT for RDP or SSH
-Disable SQL port because client will join Azure network
-Apply all OS updates and any SQL updates
+## Verify workload
 
-### Optimizing storage
-
-Notice read-only caching is setup for the "data" drive. This is a best practice and can significantly boost read performance but not harm data write performance (based on how SQL Server does data writes). The log doesn't have caching due to sequential mostly write nature.
-
-The OS drive has read/write caching on which is the right choice for the OS drive.
-
-### Optimize system databases
-
-Add tempdb files
-Move system dbs to data disk
-
-### Review all our best practices
-
-https://docs.microsoft.com/en-us/azure/azure-sql/virtual-machines/windows/performance-guidelines-best-practices-checklist#overview
-
-## Setup and configure HADR
-
-### Backup/Restore
-
-### Failover Cluster
-
-### Always On Availability Groups
-
-### SQL Server on Linux
+Follow the readme.md file in the **verifyworkload** folder
 
 ## Use the power of Azure
 
-### Setup Microsoft Defender for SQL
-
-### Setup SQL Assessment
-
-### Use SQL Insights
-
-## Verify workload and application
+Follow the readme.md file in the **powerofazure** folder
