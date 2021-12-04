@@ -1,48 +1,30 @@
-# Optimize migration to Azure SQL Managed Instance
+# Optimize and manage Azure SQL Managed Instance
+
+After the migration you will want to optimize and manage the Azure SQL Managed Instance.
+
+In this module you will go through exercises to:
+
+- Explore details of the Azure SQL Managed Instance after the migration
+- Implement and ensure best practices for Azure SQL Managed instance
+- Verify the workload after migration
+- Explore Azure services such as Microsoft Defender and SQL Insights
 
 ## Explore Azure SQL Managed Instance
 
-Setup a jumpbox
-Look over the Azure portal and az cli
-Look at differences for SSMS, DMVs, ...
+Follow the readme.md in the **explore** folder
 
-## Implement best practices
+## Implement and ensure best practices
 
-## Use AHB
+Follow the readme.md in the **bestpractices** folder
 
-In the portal select Compute+Storage on the left hand side. Look at the Cost Summary and the estimated cost/month.
+## Verify the workload
 
-In the option called Azure Hybrid Benefit select the checkbox for I already have a SQL Server license. Note the huge reduction in cost. Select the I confirm checkbox and hit Apply.
+Follow the readme.md in the **verifyworkload** folder
 
-## Configure a maintenance window
+## Investigate built-in HADR
 
-## Secure Azure SQLMI
+Follow the readme.md in the **hadr** folder
 
-### Disable public endpoint
-### Use Azure AAD
-### Setup auditing
+## Explore Azure services
 
-## Configure HADR
-
-### Review the SLA
-### LTR
-### Perform a COPY_ONLY backup
-### Use a read only connection
-### Test a failover
-
-See system dbs now part of the failover including SQL Agent jobs
-
-### Setup an auto-failover group
-
-## Use the power of Azure
-
-### Microsoft Defender for SQL
-### SQL Insights
-
-## Verify application
-
-### Connect HammerDB to MI and observe performance
-
-### Application considerations
-
-https://docs.microsoft.com/en-us/sql/dma/dma-assess-app-data-layer?view=sql-server-ver15
+Follow the readme.md in the **azureservices** folder
