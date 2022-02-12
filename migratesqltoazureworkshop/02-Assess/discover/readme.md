@@ -4,7 +4,7 @@ If you know exactly where your SQL Server is located to migrate there is not dis
 
 ## Using Azure Migrate to discover SQL Server
 
-Today Azure Migrate includes an appliance in Public Preview to discover and assessa a large number of SQL Server installations for VMWare.
+Today Azure Migrate includes an appliance in Public Preview to discover and assess a large number of SQL Server installations for VMWare.
 
 The exercises to show this capability is not available at this time.
 
