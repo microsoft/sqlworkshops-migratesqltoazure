@@ -25,6 +25,6 @@ Show sys.dm_exec_requests and sys.dm_os_memory_clerks
 Run DBCC CHECKDB(tpcc)
 Show system health session exists
 
-4. Show a jompbox
+4. Show a jumpbox
 
 Show you can connect without using the public endpoint using an Azure VM "jumpbox"
